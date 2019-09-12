@@ -1,0 +1,15 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/libbetterc
+libbetterc.so
+libbetterc.dylib
+libbetterc.dll
+libbetterc.a
+libbetterc.lib
+libbetterc-test-*
+*.exe
+*.o
+*.obj
+*.lst
