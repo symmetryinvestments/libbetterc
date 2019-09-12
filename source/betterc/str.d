@@ -1,7 +1,7 @@
 module betterc.str;
+import core.stdc.stdlib : realloc, free; 
 
 struct String {
-	import core.stdc.stdlib : realloc, free;
 	struct Payload {
 		char* ptr;
 		long refCnt;
@@ -43,7 +43,7 @@ struct String {
 			if(pl !is null) {
 				--(pl.refCnt);
 				if(pl.refCnt == 0) {
-					free(pl);
+					StringPayloadHandler.deallocate(pl);
 				}
 			}
 		}
@@ -258,6 +258,7 @@ struct String {
 		return String(this);
 	}
 
+	/// This will malloc the string and leak in betterC
 	@property string idup() const {
 		char* p;
 		p = cast(char*)realloc(p, (this.length + 1) * char.sizeof);
@@ -384,6 +385,7 @@ unittest {
 
 		auto istr = s.idup();
 		assert(str == istr);
+		free(cast(void*)istr.ptr);
 
 		foreach(it; strs) {
 			auto cmpS = cast(string)(it);
@@ -443,6 +445,7 @@ unittest {
 
 		istr = t.idup();
 		assert(str == istr);
+		free(cast(void*)istr.ptr);
 		
 		if(tdup.large !is null) {
 			assert(tdup.large.refCnt == 1);
@@ -531,11 +534,13 @@ unittest {
 			string idup2 = t.idup;
 			assert(t == idup2);
 			assert(t == strC2, t.idup);
+			free(cast(void*)idup2.ptr);
 
 			t.moveToFront();
 			idup2 = t.idup;
 			assert(t == idup2);
 			assert(t == strC2, t.idup);
+			free(cast(void*)idup2.ptr);
 		}
 
 		assert(strC2.empty);

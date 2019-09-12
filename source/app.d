@@ -6,7 +6,6 @@ void main() {
 	printf("libbetterc\n");
 
 	foreach(u; __traits(getUnitTests, betterc.str)) {
-		printf("betterc.str\n");
 		u();
 	}
 }
