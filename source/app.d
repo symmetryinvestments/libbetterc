@@ -7,9 +7,11 @@ void main() {
 	printf("libbetterc\n");
 
 	foreach(u; __traits(getUnitTests, betterc.str)) {
+		printf("String\n");
 		u();
 	}
 	foreach(u; __traits(getUnitTests, betterc.rbtree)) {
+		printf("rbtree\n");
 		u();
 	}
 }

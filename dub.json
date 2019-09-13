@@ -1,0 +1,17 @@
+{
+	"authors": [
+		"Robert burner Schadek"
+	]
+	, "copyright": "CopyRright © 2019, SymmetryInvestments"
+	, "description": "A D library to work with betterC"
+	, "license": "LGPL3"
+	, "name": "libbetterc"
+	, "configurations": [
+		{ "name" : "default" },
+		{ "name" : "unittest"
+		, "dflags" : ["-betterC", "-unittest", "-cov"]
+		, "versions" : ["RunTests"]
+		, "targetType" : "executable"
+		}
+	]
+}
