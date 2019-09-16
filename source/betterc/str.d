@@ -410,6 +410,20 @@ unittest {
 }
 
 unittest {
+	auto a = String("Hello World");
+	auto b = String("Hello Worlz");
+
+	assert(a == a);
+	assert(b == b);
+	assert(a != b);
+	assert(b != a);
+	assert(a.opCmp(b) == -1);
+	assert(b.opCmp(a) == 1);
+	assert(a.opCmp(a) == 0);
+	assert(b.opCmp(b) == 0);
+}
+
+unittest {
 	import core.stdc.stdio;
 	enum string[] strs = ["","ABC", "HellWorld", "", "Foobar", 
 		"HellWorldHellWorldHellWorldHellWorldHellWorldHellWorldHellWorldHellWorld", 
