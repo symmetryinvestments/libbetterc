@@ -269,6 +269,21 @@ struct String {
 		return cast(string)p[0 .. this.length];
 	}
 
+	int opCmp(ref const String other) const {
+    	immutable len = this.length <= other.length 
+			? this.length 
+			: other.length;
+
+		foreach (const u; 0 .. len) {
+			if(this[u] != other[u]) {
+				return this[u] > other[u] ? 1 : -1;
+			}
+		}
+    	return this.length < other.length 
+			? -1 
+			: (this.length > other.length);
+	}
+
 	enum SmallSize = 16;
 	ptrdiff_t offset;
 	ptrdiff_t len;
@@ -365,6 +380,15 @@ private void popBack(ref string s) {
 
 unittest {
 	auto s = String("Hello World");
+}
+
+unittest {
+	auto a = String("Hello World");
+	auto b = String("hello World");
+	assert(a.opCmp(b) == -1);
+	assert(b.opCmp(a) == 1);
+	assert(a.opCmp(a) == 0);
+	assert(b.opCmp(b) == 0);
 }
 
 unittest {

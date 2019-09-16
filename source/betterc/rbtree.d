@@ -1,6 +1,7 @@
 module betterc.rbtree;
 
 import core.stdc.stdio;
+import betterc.functional : less, equal;
 
 struct Iterator(T) {
 	private Node!(T)* current;
@@ -13,7 +14,6 @@ struct Iterator(T) {
 	void opUnary(string s)() if(s == "--") { decrement(); }
 	ref T opUnary(string s)() if(s == "*") { return getData(); }
 
-	//void opUnary(string s)() if(s == "++") {
 	void increment() {
 		Node!(T)* y;
 		if(null !is (y = this.current.link[true])) {
@@ -55,7 +55,6 @@ struct Iterator(T) {
 	bool isValid() const {
 		return this.current !is null;
 	}
-
 }
 
 struct Node(T) {
@@ -109,7 +108,7 @@ struct Node(T) {
 	}
 }
 
-struct RBTree(T) {
+struct RBTree(T, alias ls = less, alias eq = equal) {
 	import core.stdc.stdlib : malloc, free;
 
 	Node!(T)* newNode(T data) {
@@ -133,11 +132,11 @@ struct RBTree(T) {
 		}
 	}
 
-	private static isRed(const Node!(T)* n) {
+	private static bool isRed(const Node!(T)* n) {
 		return n !is null && n.red;
 	}
 
-	private static singleRotate(Node!(T)* node, bool dir) {
+	private static Node!(T)* singleRotate(Node!(T)* node, bool dir) {
 		Node!(T)* save = node.link[!dir];
 		node.link[!dir] = save.link[dir];
 		if(node.link[!dir] !is null) {
@@ -152,7 +151,7 @@ struct RBTree(T) {
 		return save;
 	}
 
-	private static doubleRotate(Node!(T)* node, bool dir) {
+	private static Node!(T)* doubleRotate(Node!(T)* node, bool dir) {
 		node.link[!dir] = singleRotate(node.link[!dir], !dir);
 		if(node.link[!dir] !is null) {
 			node.link[!dir].parent = node;	
@@ -221,12 +220,12 @@ struct RBTree(T) {
 	}
 
 	private Node!(T)* search(Node!(T)* node ,T data) {
-		if(node is null)
+		if(node is null) {
 			return null;
-		else if(node.data == data)
+		} else if(eq(node.data, data)) {
 			return node;
-		else {
-			bool dir = node.data < data;
+		} else {
+			bool dir = ls(node.data, data);
 			return this.search(node.link[dir], data);
 		}
 	}
@@ -264,7 +263,7 @@ struct RBTree(T) {
 			done = true;
 		} else {
 			bool dir;
-			if(node.data == data) {
+			if(eq(node.data, data)) {
 				succes = true;
 				if(node.link[0] is null || node.link[1] is null) {
 					Node!(T)* save = node.link[node.link[0] is null];	
@@ -287,7 +286,7 @@ struct RBTree(T) {
 					data = heir.data;
 				}
 			}
-			dir = node.data < data;
+			dir = ls(node.data, data);
 			node.link[dir] = removeR(node.link[dir], data, done, succes);
 			if(node.link[dir] !is null) {
 				node.link[dir].parent = node;
@@ -317,7 +316,7 @@ struct RBTree(T) {
 				s.red = true;
 			} else {
 				bool save = p.red;
-				bool newRoot = (node == p);
+				bool newRoot = eq(node, p);
 				
 				if(isRed(s.link[!dir])) {
 					p = singleRotate(p, dir);
@@ -358,7 +357,7 @@ struct RBTree(T) {
 			this.size++;
 			success = true;
 		} else if(data != root.data) {
-			bool dir = root.data < data;
+			bool dir = ls(root.data, data);
 
 			root.link[dir] = insertImpl(root.link[dir], data, success);
 			root.link[dir].parent = root;
