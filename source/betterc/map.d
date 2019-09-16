@@ -22,10 +22,16 @@ struct Map(K,V,alias lessThan = less, alias equalTo = equal) {
 		return this.tree.insert(MapNode(key, value));
 	}
 
-	Node!(MapNode)* opIndex(K key) {
+	Node!(MapNode)* opIndex(this T)(K key) {
 		MapNode s;
 		s.key = key;
 		return this.tree.search(s);
+	}
+
+	bool remove(K key) {
+		MapNode s;
+		s.key = key;
+		return this.tree.remove(s);
 	}
 
 	@property size_t length() const pure nothrow {
@@ -50,6 +56,8 @@ unittest {
 	assert(map.length == 1);
 	assert(map[10] is null);
 	assert(map[1] !is null);
-	pragma(msg, typeof(map[1]).stringof);
 	assert(map[1].value == 1000);
+	assert(map.remove(1));
+	assert(map.empty);
+	assert(map.length == 0);
 }

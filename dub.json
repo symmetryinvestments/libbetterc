@@ -8,7 +8,7 @@
 	, "name": "libbetterc"
 	, "configurations": [
 		{ "name" : "default" },
-		{ "name" : "unittest"
+		{ "name" : "unittestBetterc"
 		, "dflags" : ["-betterC", "-unittest", "-cov"]
 		, "versions" : ["RunTests"]
 		, "targetType" : "executable"
