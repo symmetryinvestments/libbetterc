@@ -392,6 +392,24 @@ unittest {
 }
 
 unittest {
+	auto a = String("Hello Worl");
+	auto b = String("hello World");
+	assert(a.opCmp(b) == -1);
+	assert(b.opCmp(a) == 1);
+	assert(a.opCmp(a) == 0);
+	assert(b.opCmp(b) == 0);
+}
+
+unittest {
+	auto a = String("Hello Worl");
+	auto b = String("hello World");
+
+	assert(a == a);
+	assert(a != b);
+	assert(b != a);
+}
+
+unittest {
 	import core.stdc.stdio;
 	enum string[] strs = ["","ABC", "HellWorld", "", "Foobar", 
 		"HellWorldHellWorldHellWorldHellWorldHellWorldHellWorldHellWorldHellWorld", 
@@ -474,21 +492,6 @@ unittest {
 		if(tdup.large !is null) {
 			assert(tdup.large.refCnt == 1);
 		}
-
-		/*foreach(it; strs) {
-			auto joinStr = cast(string)(it);
-			auto itStr = String(joinStr);
-			auto compareStr = str ~ joinStr;
-
-			auto t2dup = tdup ~ joinStr;
-			auto t2dup2 = tdup ~ itStr;
-
-			assert(t2dup.length == compareStr.length);
-			assert(t2dup2.length == compareStr.length);
-
-			assert(t2dup == compareStr);
-			assert(t2dup2 == compareStr);
-		}*/
 
 		s = t;
 		assert(!s.empty);

@@ -64,6 +64,8 @@ struct Node(T) {
 	Node!(T)*[2] link;
 	Node!(T)* parent;
 
+	alias getData this;
+
 	ref T getData() {
 		return this.data;
 	}
