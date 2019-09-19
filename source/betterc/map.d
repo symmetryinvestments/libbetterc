@@ -2,7 +2,7 @@ module betterc.map;
 
 import betterc.functional : less, equal;
 
-@nogc @safe:
+@nogc nothrow @safe:
 
 struct Map(K,V,alias lessThan = less, alias equalTo = equal) {
 	import betterc.rbtree;

@@ -3,7 +3,7 @@ module betterc.rbtree;
 import core.stdc.stdio;
 import betterc.functional : less, equal;
 
-@nogc @safe:
+@nogc nothrow @safe:
 
 struct Iterator(T) {
 	private Node!(T)* current;

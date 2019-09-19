@@ -5,6 +5,7 @@ void main() {
 	import betterc.rbtree;
 	import betterc.map;
 	import betterc.dynamicarray;
+	import betterc.sumtype;
 	import core.stdc.stdio;
 	printf("libbetterc\n");
 
@@ -22,6 +23,10 @@ void main() {
 	}
 	printf("DynamicArray\n");
 	foreach(u; __traits(getUnitTests, betterc.dynamicarray)) {
+		u();
+	}
+	printf("SumType\n");
+	foreach(u; __traits(getUnitTests, betterc.sumtype)) {
 		u();
 	}
 }
