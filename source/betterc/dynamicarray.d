@@ -167,7 +167,7 @@ unittest {
 			assert(r[idx] == idx);
 		}
 
-		auto s = a[0 .. a.length];
+		auto s = a[0 .. $];
 		assert(s.front == 0);
 		assert(s.back == it);
 		assert(s.length == it + 1);

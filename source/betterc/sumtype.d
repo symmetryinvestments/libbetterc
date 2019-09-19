@@ -25,8 +25,7 @@ unittest {
 	Temperature t3 = Kelvin(273);
 
 	// Use pattern matching to access the value.
-	pure @safe @nogc nothrow
-	Fahrenheit toFahrenheit(Temperature t)
+	Fahrenheit toFahrenheit(Temperature t) pure @safe @nogc nothrow
 	{
 		return Fahrenheit(
 			t.match!(
