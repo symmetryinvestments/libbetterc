@@ -6,6 +6,7 @@ void main() {
 	import betterc.map;
 	import betterc.dynamicarray;
 	import betterc.sumtype;
+	import betterc.algorithm.sorting;
 	import core.stdc.stdio;
 	printf("libbetterc\n");
 
@@ -27,6 +28,10 @@ void main() {
 	}
 	printf("SumType\n");
 	foreach(u; __traits(getUnitTests, betterc.sumtype)) {
+		u();
+	}
+	printf("algorithm.sorting\n");
+	foreach(u; __traits(getUnitTests, betterc.algorithm.sorting)) {
 		u();
 	}
 }

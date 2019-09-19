@@ -8,18 +8,16 @@
 			"targetType": "library"
 		},
 		{
-			"dflags": [
-				"-betterC",
-				"-unittest",
-				"-cov",
-				"-dip1000",
-				"-dip25"
-			],
 			"name": "unittestBetterc",
 			"targetType": "executable",
-			"versions": [
-				"RunTests"
-			]
+			"versions": [ "RunTests" ],
+			"dflags":
+				[ "-betterC"
+				, "-unittest"
+				, "-cov"
+				, "-dip1000"
+				, "-dip25"
+				]
 		}
 	],
 	"copyright": "CopyRright © 2019, SymmetryInvestments",
