@@ -12,15 +12,15 @@ void main() {
 	foreach(u; __traits(getUnitTests, betterc.str)) {
 		u();
 	}
-	printf("rbtree\n");
+	printf("Rbtree\n");
 	foreach(u; __traits(getUnitTests, betterc.rbtree)) {
 		u();
 	}
-	printf("rbtree\n");
+	printf("Map\n");
 	foreach(u; __traits(getUnitTests, betterc.map)) {
 		u();
 	}
-	printf("dynamicarray\n");
+	printf("DynamicArray\n");
 	foreach(u; __traits(getUnitTests, betterc.dynamicarray)) {
 		u();
 	}
