@@ -4,19 +4,24 @@ void main() {
 	import betterc.str;
 	import betterc.rbtree;
 	import betterc.map;
+	import betterc.dynamicarray;
 	import core.stdc.stdio;
 	printf("libbetterc\n");
 
+	printf("String\n");
 	foreach(u; __traits(getUnitTests, betterc.str)) {
-		printf("String\n");
 		u();
 	}
+	printf("rbtree\n");
 	foreach(u; __traits(getUnitTests, betterc.rbtree)) {
-		printf("rbtree\n");
 		u();
 	}
+	printf("rbtree\n");
 	foreach(u; __traits(getUnitTests, betterc.map)) {
-		printf("rbtree\n");
+		u();
+	}
+	printf("dynamicarray\n");
+	foreach(u; __traits(getUnitTests, betterc.dynamicarray)) {
 		u();
 	}
 }
