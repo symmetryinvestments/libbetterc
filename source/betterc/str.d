@@ -1,7 +1,10 @@
 module betterc.str;
 import core.stdc.stdlib : realloc, free; 
 
+@nogc @safe:
+
 struct String {
+@nogc: 
 	struct Payload {
 		char* ptr;
 		long refCnt;
@@ -9,6 +12,7 @@ struct String {
 	}
 
 	struct StringPayloadHandler {
+		@nogc:
 		static Payload* make() @trusted {
 			Payload* pl;
 			pl = cast(Payload*)realloc(pl, Payload.sizeof);
@@ -57,7 +61,7 @@ struct String {
 		this.assign(n);
 	}
 
-	this(const String n) {
+	this(const String n) @trusted {
 		this.assign(cast(string)n.storePtr()[0 .. n.length]);
 	}
 
@@ -112,7 +116,7 @@ struct String {
 		return this.large is null;
 	}
 
-	private char* storePtr() {
+	private char* storePtr() scope return @trusted {
 		if(this.isSmall()) {
 			return this.small.ptr;
 		} else {
@@ -120,7 +124,7 @@ struct String {
 		}
 	}
 
-	private const(char)* storePtr() const {
+	private const(char)* storePtr() scope return const @trusted {
 		if(this.isSmall()) {
 			return this.small.ptr;
 		} else {
@@ -259,7 +263,7 @@ struct String {
 	}
 
 	/// This will malloc the string and leak in betterC
-	@property string idup() const {
+	@property string idup() const @trusted {
 		char* p;
 		p = cast(char*)realloc(p, (this.length + 1) * char.sizeof);
 		foreach(idx; 0 .. this.length) {
@@ -331,13 +335,13 @@ Nullable!uint strideBack(inout(char)[] str , size_t index) {
 		return typeof(return)(1);
 
 	if (index >= 4) { //single verification for most common case
-		static foreach (i; 2 .. 5) {
+		foreach (i; 2 .. 5) {
 			if((str[index-i] & 0b1100_0000) != 0b1000_0000) {
 				return typeof(return)(i);
 			}
 		}
 	} else {
-		static foreach(i; 2 .. 4) {
+		foreach(i; 2 .. 4) {
 			if(index >= i && (str[index-i] & 0b1100_0000) != 0b1000_0000) {
 				return typeof(return)(i);
 			}
@@ -441,7 +445,9 @@ unittest {
 
 		auto istr = s.idup();
 		assert(str == istr);
-		free(cast(void*)istr.ptr);
+		() @trusted {
+			free(cast(void*)istr.ptr);
+		}();
 
 		foreach(it; strs) {
 			auto cmpS = cast(string)(it);
@@ -501,7 +507,9 @@ unittest {
 
 		istr = t.idup();
 		assert(str == istr);
-		free(cast(void*)istr.ptr);
+		() @trusted {
+			free(cast(void*)istr.ptr);
+		}();
 		
 		if(tdup.large !is null) {
 			assert(tdup.large.refCnt == 1);
@@ -575,13 +583,18 @@ unittest {
 			string idup2 = t.idup;
 			assert(t == idup2);
 			assert(t == strC2, t.idup);
-			free(cast(void*)idup2.ptr);
+			() @trusted {
+				free(cast(void*)idup2.ptr);
+			}();
 
 			t.moveToFront();
 			idup2 = t.idup;
 			assert(t == idup2);
 			assert(t == strC2, t.idup);
-			free(cast(void*)idup2.ptr);
+
+			() @trusted {
+				free(cast(void*)idup2.ptr);
+			}();
 		}
 
 		assert(strC2.empty);

@@ -9,7 +9,7 @@
 	, "configurations": [
 		{ "name" : "default" },
 		{ "name" : "unittestBetterc"
-		, "dflags" : ["-betterC", "-unittest", "-cov"]
+		, "dflags" : ["-betterC", "-unittest", "-cov", "-dip1000", "-dip25"]
 		, "versions" : ["RunTests"]
 		, "targetType" : "executable"
 		}

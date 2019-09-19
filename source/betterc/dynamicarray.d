@@ -2,7 +2,7 @@ module betterc.dynamicarray;
 
 import core.stdc.stdio;
 
-@nogc nothrow:
+@nogc nothrow @safe:
 
 struct DynamicArray(T) {
 	import core.stdc.stdlib : realloc, free;
@@ -38,9 +38,12 @@ struct DynamicArray(T) {
 		}
 	}
 
+	@disable this(this) {
+	}
+
 	~this() {
 		if(this.ptr) {
-			free(cast(void*)ptr);
+			() @trusted { free(cast(void*)ptr); }();
 			this.length = 0;
 			this._capacity = 0;
 		}
@@ -50,6 +53,10 @@ struct DynamicArray(T) {
 		return this.length == 0;
 	}
 
+	@property size_t opDollar() const {
+		return this.length;
+	}
+
 	@property size_t capacity() const {
 		return this._capacity;
 	}
@@ -57,7 +64,9 @@ struct DynamicArray(T) {
 	void assureCapacity(size_t cap) {
 		if(cap > this.length) {
 			this._capacity = cap;
-			this.ptr = cast(T*)realloc(this.ptr, T.sizeof * this._capacity);
+			() @trusted {
+				this.ptr = cast(T*)realloc(this.ptr, T.sizeof * this._capacity);
+			}();
 			assert(this.ptr);
 		}
 	}
@@ -71,7 +80,7 @@ struct DynamicArray(T) {
 
 	void insertBack(T t) {
 		this.assureCapacity();
-		*(this.ptr + this.length) = t;
+		() @trusted { *(this.ptr + this.length) = t; }();
 		++this.length;
 	}
 
@@ -79,7 +88,7 @@ struct DynamicArray(T) {
 		--this.length;
 	}
 
-	void insert(const size_t idx, T t) {
+	void insert(const size_t idx, T t) @trusted {
 		assert(idx < this.length);
 		this.assureCapacity();
 		for(size_t i = this.length; i > idx; --i) {
@@ -89,7 +98,7 @@ struct DynamicArray(T) {
 		this.length++;
 	}
 
-	ref T opIndex(size_t idx) {
+	ref T opIndex(size_t idx) @trusted {
 		assert(idx < this.length);
 		return *(this.ptr + idx);
 	}
@@ -98,7 +107,7 @@ struct DynamicArray(T) {
 		return *(this.ptr);
 	}
 
-	@property ref T back() {
+	@property ref T back() @trusted {
 		return *(this.ptr + (this.length - 1));
 	}
 
@@ -186,4 +195,14 @@ unittest {
 	foreach(it; [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]) {
 		assert(a[it] == it);
 	}
+	a.insert(0, -1);
+	foreach(it; [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]) {
+		assert(a[it] == it - 1);
+	}
+}
+
+unittest {
+	DynamicArray!int a;
+	DynamicArray!int b;
+	static assert(!__traits(compiles, b = a));
 }

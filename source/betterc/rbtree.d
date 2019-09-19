@@ -3,6 +3,8 @@ module betterc.rbtree;
 import core.stdc.stdio;
 import betterc.functional : less, equal;
 
+@nogc @safe:
+
 struct Iterator(T) {
 	private Node!(T)* current;
 
@@ -73,12 +75,16 @@ struct Node(T) {
 	bool validate(bool root, const Node!(T)* par = null) const {
 		if(!root) {
 			if(this.parent is null) {
+				() @trusted {
 				printf("%s %d %d\n", __FILE__.ptr,__LINE__,": parent is null".ptr);
+				}();
 				return false;
 			}
 			if(this.parent !is par) {
+				() @trusted {
 				printf("%s %d %s\n", __FILE__.ptr,__LINE__,": parent is wrong
 						".ptr);
+				}();
 				return false;
 			}
 		}
@@ -97,10 +103,14 @@ struct Node(T) {
 
 	void print(int i) {
 		foreach(it; 0 .. i) {
+			() @trusted {
 			printf("  ");
+			}();
 		}
+		() @trusted {
 		printf("%x %d %x\n", cast(size_t)&this, this.red,
 				cast(size_t)this.parent);
+		}();
 		if(this.link[0] !is null) {
 			this.link[0].print(i + 1);
 		}
@@ -120,7 +130,8 @@ struct RBTree(T, alias ls = less, alias eq = equal) {
 	}
 
 	Node!(T)* newNode() {
-		Node!T* ret = cast(Node!T*)malloc(Node!(T).sizeof);
+		Node!T* ret = 
+			() @trusted { return cast(Node!T*)malloc(Node!(T).sizeof); }();
 		ret.red = true;
 		ret.parent = null;
 		ret.link[0] = null;		
@@ -130,7 +141,7 @@ struct RBTree(T, alias ls = less, alias eq = equal) {
 
 	void freeNode(Node!(T)* node) {
 		if(node !is null) {
-			free(cast(void*)node);
+			() @trusted { free(cast(void*)node); }();
 		}
 	}
 
@@ -166,18 +177,24 @@ struct RBTree(T, alias ls = less, alias eq = equal) {
 			return 1;
 		} else {
 			if(node.parent !is parent) {
+				() @trusted {
 				printf("parent violation %d %d\n", node.parent is null, 
 					parent is null);
+				}();
 			}
 			if(node.link[0] !is null) {
+				() @trusted {
 				if(node.link[0].parent !is node) {
 					printf("parent violation link wrong\n");
 				}
+				}();
 			}
 			if(node.link[1] !is null) {
+				() @trusted {
 				if(node.link[1].parent !is node) {
 					printf("parent violation link wrong\n");
 				}
+				}();
 			}
 
 			Node!(T)* ln = node.link[0];
@@ -185,7 +202,9 @@ struct RBTree(T, alias ls = less, alias eq = equal) {
 
 			if(isRed(node)) {
 				if(isRed(ln) || isRed(rn)) {
-					printf("Red violation\n");
+					() @trusted {
+						printf("Red violation\n");
+					}();
 					return 0;
 				}
 			}
@@ -195,12 +214,16 @@ struct RBTree(T, alias ls = less, alias eq = equal) {
 			if((ln !is null && ln.data >= node.data)
 					|| (rn !is null && rn.data <= node.data)) 
 			{
+				() @trusted {
 				printf("Binary tree violation\n");
+				}();
 				return 0;
 			}
 
 			if(lh != 0 && rh != 0 && lh != rh) {
+				() @trusted {
 				printf("Black violation %d %d\n", lh, rh);
+				}();
 				return 0;
 			}
 
@@ -458,7 +481,7 @@ unittest {
 	test2(a[]);
 }
 
-private void test1(immutable int[] lots) {
+private void test1(scope immutable int[] lots) {
 	RBTree!(int) a;
 	foreach(idx, it; lots) {
 		assert(a.insert(it));
@@ -525,7 +548,7 @@ private void test1(immutable int[] lots) {
 	//writeln(__LINE__);
 }
 
-private void test2(immutable int[] lot) {
+private void test2(scope immutable int[] lot) {
 	for(int i = 0; i < lot.length; i++) {
 		RBTree!(int) itT;
 		foreach(it; lot) {
