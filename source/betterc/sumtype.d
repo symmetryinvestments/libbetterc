@@ -20,9 +20,15 @@ unittest {
 	alias Temperature = SumType!(Fahrenheit, Celsius, Kelvin);
 
 	// Construct from any of the member types.
-	Temperature t1 = Fahrenheit(98.6);
-	Temperature t2 = Celsius(100);
-	Temperature t3 = Kelvin(273);
+	Temperature t1;
+	Temperature t2;
+	Temperature t3;
+
+	() @trusted {
+		t1 = Fahrenheit(98.6);
+		t2 = Celsius(100);
+		t3 = Kelvin(273);
+	}();
 
 	// Use pattern matching to access the value.
 	Fahrenheit toFahrenheit(Temperature t) pure @safe @nogc nothrow

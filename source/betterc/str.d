@@ -1,10 +1,10 @@
 module betterc.str;
-import core.stdc.stdlib : realloc, free; 
+import core.stdc.stdlib : realloc, free;
 
 @nogc @safe:
 
 struct String {
-@nogc: 
+@nogc:
 	struct Payload {
 		char* ptr;
 		long refCnt;
@@ -19,10 +19,10 @@ struct String {
 			pl.ptr = null;
 			pl.capacity = 0;
 			pl.refCnt = 1;
-	
+
 			return pl;
 		}
-	
+
 		static void allocate(Payload* pl, in size_t s) @trusted {
 			assert(s != 0);
 			if(s >= pl.capacity) {
@@ -30,19 +30,19 @@ struct String {
 				pl.capacity = s;
 			}
 		}
-	
+
 		static void deallocate(Payload* pl) @trusted {
 			realloc(pl.ptr, 0);
 			pl.capacity = 0;
 			realloc(pl, 0);
 		}
-	
+
 		static void incrementRefCnt(Payload* pl) {
 			if(pl !is null) {
 				++(pl.refCnt);
 			}
 		}
-	
+
 		static void decrementRefCnt(Payload* pl) {
 			if(pl !is null) {
 				--(pl.refCnt);
@@ -141,7 +141,7 @@ struct String {
 				}
 			} else {
 				for(int i = 0; i < len; ++i) {
-					(() @trusted => 
+					(() @trusted =>
 					this.large.ptr[i] = this.large.ptr[this.offset + i]
 					)();
 				}
@@ -186,7 +186,7 @@ struct String {
 	}
 
 	bool opEquals(T)(T other) const
-			if(is(T == string) || is(T == String) || is(T == const(String))) 
+			if(is(T == string) || is(T == String) || is(T == const(String)))
 	{
 		if(this.length == other.length) {
 			for(size_t i = 0; i < this.length; ++i) {
@@ -246,16 +246,16 @@ struct String {
 			: this.largePtr(this.offset, this.len));
 
 		assert(!l.isNull);
-		this.offset += l.get();
+		this.offset += l.get(0U);
 	}
 
 	void popBack() {
-		const auto l = strideBack(this.isSmall() 
+		const auto l = strideBack(this.isSmall()
 			? this.small[this.offset .. this.len]
 			: this.largePtr(this.offset, this.len));
 
 		assert(!l.isNull);
-		this.len -= l.get();
+		this.len -= l.get(0U);
 	}
 
 	@property String dup() const {
@@ -273,9 +273,9 @@ struct String {
 		return cast(string)p[0 .. this.length];
 	}
 
-	int opCmp(ref const String other) const {
-    	immutable len = this.length <= other.length 
-			? this.length 
+	int opCmp(ref const(String) other) const {
+    	immutable len = this.length <= other.length
+			? this.length
 			: other.length;
 
 		foreach (const u; 0 .. len) {
@@ -283,8 +283,8 @@ struct String {
 				return this[u] > other[u] ? 1 : -1;
 			}
 		}
-    	return this.length < other.length 
-			? -1 
+    	return this.length < other.length
+			? -1
 			: (this.length > other.length);
 	}
 
@@ -372,14 +372,12 @@ private @property char back(string s) {
 
 private void popFront(ref string s) {
 	Nullable!uint l = stride(s);
-	assert(!l.isNull);
-	s = s[l.get() .. $];
+	s = s[l.get(0U) .. $];
 }
 
 private void popBack(ref string s) {
 	Nullable!uint l = strideBack(s);
-	assert(!l.isNull);
-	s = s[0 .. $ - l.get()];
+	s = s[0 .. $ - l.get(0U)];
 }
 
 unittest {
@@ -387,8 +385,8 @@ unittest {
 }
 
 unittest {
-	auto a = String("Hello World");
-	auto b = String("hello World");
+	const a = String("Hello World");
+	const b = String("hello World");
 	assert(a.opCmp(b) == -1);
 	assert(b.opCmp(a) == 1);
 	assert(a.opCmp(a) == 0);
@@ -396,8 +394,8 @@ unittest {
 }
 
 unittest {
-	auto a = String("Hello Worl");
-	auto b = String("hello World");
+	const a = String("Hello Worl");
+	const b = String("hello World");
 	assert(a.opCmp(b) == -1);
 	assert(b.opCmp(a) == 1);
 	assert(a.opCmp(a) == 0);
@@ -405,8 +403,8 @@ unittest {
 }
 
 unittest {
-	auto a = String("Hello Worl");
-	auto b = String("hello World");
+	const a = String("Hello Worl");
+	const b = String("hello World");
 
 	assert(a == a);
 	assert(a != b);
@@ -414,8 +412,8 @@ unittest {
 }
 
 unittest {
-	auto a = String("Hello World");
-	auto b = String("Hello Worlz");
+	const a = String("Hello World");
+	const b = String("Hello Worlz");
 
 	assert(a == a);
 	assert(b == b);
@@ -429,8 +427,8 @@ unittest {
 
 unittest {
 	import core.stdc.stdio;
-	enum string[] strs = ["","ABC", "HellWorld", "", "Foobar", 
-		"HellWorldHellWorldHellWorldHellWorldHellWorldHellWorldHellWorldHellWorld", 
+	enum string[] strs = ["","ABC", "HellWorld", "", "Foobar",
+		"HellWorldHellWorldHellWorldHellWorldHellWorldHellWorldHellWorldHellWorld",
 		"ABCD", "Hello", "HellWorldHellWorld", "ölleä",
 		"hello\U00010143\u0100\U00010143", "£$€¥", "öhelloöö"
 	];
@@ -510,7 +508,7 @@ unittest {
 		() @trusted {
 			free(cast(void*)istr.ptr);
 		}();
-		
+
 		if(tdup.large !is null) {
 			assert(tdup.large.refCnt == 1);
 		}

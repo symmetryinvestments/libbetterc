@@ -1,5 +1,7 @@
 module betterc.nullable;
 
+@safe pure:
+
 struct Nullable(T) {
 	T value;
 	bool isNull = true;
@@ -9,13 +11,15 @@ struct Nullable(T) {
 		this.isNull = false;
 	}
 
-	ref T get() {
-		assert(!this.isNull);
-		return this.value;
+	T get(G)(G ifNull) {
+		return this.isNull
+			? ifNull
+			: this.value;
 	}
 
-	ref const(T) get() const {
-		assert(!this.isNull);
-		return this.value;
+	const(T) get(G)(G ifNull) const {
+		return this.isNull
+			? ifNull
+			: this.value;
 	}
 }

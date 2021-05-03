@@ -31,7 +31,7 @@ struct Iterator(T) {
 			}
 			this.current = y;
 		}
-	}	
+	}
 
 	ref T getData() {
 		return this.current.getData();
@@ -76,14 +76,15 @@ struct Node(T) {
 		if(!root) {
 			if(this.parent is null) {
 				() @trusted {
-				printf("%s %d %d\n", __FILE__.ptr,__LINE__,": parent is null".ptr);
+				printf("%s %d %lu\n", __FILE__.ptr,__LINE__,
+						cast(ulong)": parent is null".ptr);
 				}();
 				return false;
 			}
 			if(this.parent !is par) {
 				() @trusted {
-				printf("%s %d %s\n", __FILE__.ptr,__LINE__,": parent is wrong
-						".ptr);
+				printf("%s %d %lu\n", __FILE__.ptr,__LINE__,
+						cast(ulong)": parent is wrong".ptr);
 				}();
 				return false;
 			}
@@ -108,7 +109,7 @@ struct Node(T) {
 			}();
 		}
 		() @trusted {
-		printf("%x %d %x\n", cast(size_t)&this, this.red,
+		printf("%lx %d %lx\n", cast(size_t)&this, this.red,
 				cast(size_t)this.parent);
 		}();
 		if(this.link[0] !is null) {
@@ -130,12 +131,12 @@ struct RBTree(T, alias ls = less, alias eq = equal) {
 	}
 
 	Node!(T)* newNode() {
-		Node!T* ret = 
+		Node!T* ret =
 			() @trusted { return cast(Node!T*)malloc(Node!(T).sizeof); }();
 		ret.red = true;
 		ret.parent = null;
-		ret.link[0] = null;		
-		ret.link[1] = null;		
+		ret.link[0] = null;
+		ret.link[1] = null;
 		return ret;
 	}
 
@@ -167,7 +168,7 @@ struct RBTree(T, alias ls = less, alias eq = equal) {
 	private static Node!(T)* doubleRotate(Node!(T)* node, bool dir) {
 		node.link[!dir] = singleRotate(node.link[!dir], !dir);
 		if(node.link[!dir] !is null) {
-			node.link[!dir].parent = node;	
+			node.link[!dir].parent = node;
 		}
 		return singleRotate(node, dir);
 	}
@@ -178,7 +179,7 @@ struct RBTree(T, alias ls = less, alias eq = equal) {
 		} else {
 			if(node.parent !is parent) {
 				() @trusted {
-				printf("parent violation %d %d\n", node.parent is null, 
+				printf("parent violation %d %d\n", node.parent is null,
 					parent is null);
 				}();
 			}
@@ -210,9 +211,9 @@ struct RBTree(T, alias ls = less, alias eq = equal) {
 			}
 			int lh = validate(ln, node);
 			int rh = validate(rn, node);
-			
+
 			if((ln !is null && ln.data >= node.data)
-					|| (rn !is null && rn.data <= node.data)) 
+					|| (rn !is null && rn.data <= node.data))
 			{
 				() @trusted {
 				printf("Binary tree violation\n");
@@ -282,7 +283,7 @@ struct RBTree(T, alias ls = less, alias eq = equal) {
 		return succes;
 	}
 
-	private Node!(T)* removeR(Node!(T)* node, T data, ref bool done, 
+	private Node!(T)* removeR(Node!(T)* node, T data, ref bool done,
 			ref bool succes) {
 		if(node is null) {
 			done = true;
@@ -291,7 +292,7 @@ struct RBTree(T, alias ls = less, alias eq = equal) {
 			if(eq(node.data, data)) {
 				succes = true;
 				if(node.link[0] is null || node.link[1] is null) {
-					Node!(T)* save = node.link[node.link[0] is null];	
+					Node!(T)* save = node.link[node.link[0] is null];
 
 					if(isRed(node)) {
 						done = true;
@@ -331,7 +332,7 @@ struct RBTree(T, alias ls = less, alias eq = equal) {
 			node = singleRotate(node, dir);
 			s = p.link[!dir];
 		}
-		
+
 		if(s !is null) {
 			if(!isRed(s.link[0]) && !isRed(s.link[1])) {
 				if(isRed(p)) {
@@ -342,7 +343,7 @@ struct RBTree(T, alias ls = less, alias eq = equal) {
 			} else {
 				bool save = p.red;
 				bool newRoot = eq(node, p);
-				
+
 				if(isRed(s.link[!dir])) {
 					p = singleRotate(p, dir);
 				} else {
@@ -421,7 +422,7 @@ struct RBTree(T, alias ls = less, alias eq = equal) {
 			count++;
 		}
 		auto it = Iterator!(T)(be);
-		return it;	
+		return it;
 	}
 
 	Iterator!(T) end() {

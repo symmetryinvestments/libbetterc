@@ -8,21 +8,30 @@
 			"targetType": "library"
 		},
 		{
-			"name": "unittestBetterc",
-			"targetType": "executable",
-			"versions": [ "RunTests" ],
-			"dflags":
+			"name": "unittestBetterc"
+			, "targetType": "executable"
+			, "versions": [ "RunTests" ]
+			, "dflags":
 				[ "-betterC"
 				, "-unittest"
 				, "-cov"
 				, "-dip1000"
 				, "-dip25"
+				, "-preview=dip1021"
+				]
+		},
+		{
+			"name": "wasm"
+			, "targetType": "library"
+			, "dflags":
+				[ "-mtriple=wasm32-unknown-unknown-wasm"
+				, "-betterC"
 				]
 		}
 	],
 	"copyright": "CopyRright © 2019, SymmetryInvestments",
 	"dependencies": {
-		"sumtype": "~>0.8.13"
+		"sumtype": "1.1.1"
 	},
 	"description": "A D library to work with betterC",
 	"license": "LGPL3",
