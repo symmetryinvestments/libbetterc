@@ -1,11 +1,15 @@
 module betterc.rbtree;
 
-import core.stdc.stdio;
 import betterc.functional : less, equal;
+version(WASM) {
+} else {
+	import core.stdc.stdio;
+}
 
 @nogc nothrow @safe:
 
 struct Iterator(T) {
+@nogc nothrow @safe:
 	private Node!(T)* current;
 
 	this(Node!(T)* current) {
@@ -60,6 +64,7 @@ struct Iterator(T) {
 }
 
 struct Node(T) {
+@nogc nothrow @safe:
 	T data;
 	bool red;
 
@@ -75,17 +80,19 @@ struct Node(T) {
 	bool validate(bool root, const Node!(T)* par = null) const {
 		if(!root) {
 			if(this.parent is null) {
-				() @trusted {
+				/*() @trusted {
 				printf("%s %d %lu\n", __FILE__.ptr,__LINE__,
 						cast(ulong)": parent is null".ptr);
 				}();
+				*/
 				return false;
 			}
 			if(this.parent !is par) {
-				() @trusted {
+				/*() @trusted {
 				printf("%s %d %lu\n", __FILE__.ptr,__LINE__,
 						cast(ulong)": parent is wrong".ptr);
 				}();
+				*/
 				return false;
 			}
 		}
@@ -103,6 +110,8 @@ struct Node(T) {
 	}
 
 	void print(int i) {
+		version(WASM) {
+		} else {
 		foreach(it; 0 .. i) {
 			() @trusted {
 			printf("  ");
@@ -118,11 +127,18 @@ struct Node(T) {
 		if(this.link[1] !is null) {
 			this.link[1].print(i + 1);
 		}
+		}
 	}
 }
 
 struct RBTree(T, alias ls = less, alias eq = equal) {
-	import core.stdc.stdlib : malloc, free;
+@nogc nothrow @safe:
+	version(WASM) {
+		void* malloc(size_t);
+		void free(void*);
+	} else {
+		import core.stdc.stdlib : malloc, free;
+	}
 
 	Node!(T)* newNode(T data) {
 		Node!(T)* ret = newNode();
@@ -174,6 +190,9 @@ struct RBTree(T, alias ls = less, alias eq = equal) {
 	}
 
 	private static int validate(Node!(T)* node, Node!(T)* parent) {
+		version(WASM) {
+			return 0;
+		} else {
 		if(node is null) {
 			return 1;
 		} else {
@@ -233,6 +252,7 @@ struct RBTree(T, alias ls = less, alias eq = equal) {
 			} else {
 				return 0;
 			}
+		}
 		}
 	}
 

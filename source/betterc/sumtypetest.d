@@ -1,5 +1,6 @@
 module betterc.sumtype;
 
+/*
 public import sumtype;
 
 @nogc @safe nothrow:
@@ -46,3 +47,4 @@ unittest {
 	assert(approxEqual(toFahrenheit(t2).degrees, 212));
 	assert(approxEqual(toFahrenheit(t3).degrees, 32));
 }
+*/

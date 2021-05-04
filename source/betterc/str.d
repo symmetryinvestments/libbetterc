@@ -1,10 +1,13 @@
 module betterc.str;
-import core.stdc.stdlib : realloc, free;
+version(WASM) {
+	void* realloc(void*, size_t) nothrow @safe pure;
+	void free(void*) nothrow @safe pure;
+} else {
+	import core.stdc.stdlib : realloc, free;
+}
 
-@nogc @safe:
-
+@safe:
 struct String {
-@nogc:
 	struct Payload {
 		char* ptr;
 		long refCnt;
@@ -12,7 +15,6 @@ struct String {
 	}
 
 	struct StringPayloadHandler {
-		@nogc:
 		static Payload* make() @trusted {
 			Payload* pl;
 			pl = cast(Payload*)realloc(pl, Payload.sizeof);

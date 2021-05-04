@@ -23,16 +23,17 @@
 		{
 			"name": "wasm"
 			, "targetType": "library"
+			, "versions" : ["WASM"]
 			, "dflags":
 				[ "-mtriple=wasm32-unknown-unknown-wasm"
 				, "-betterC"
+				, "-dip1000"
+				, "-dip25"
+				, "-preview=dip1021"
 				]
 		}
 	],
 	"copyright": "CopyRright © 2019, SymmetryInvestments",
-	"dependencies": {
-		"sumtype": "1.1.1"
-	},
 	"description": "A D library to work with betterC",
 	"license": "LGPL3",
 	"name": "libbetterc"

@@ -1,7 +1,5 @@
 module betterc.dynamicarray;
 
-import core.stdc.stdio;
-
 @nogc nothrow @safe:
 
 struct DynamicArray(T) {
